@@ -1,3 +1,5 @@
+import "./globals.css";
+
 export const metadata = {
   title: "НЕ СПЕШИ — доставка їжі",
   description: "Доставка їжі НЕ СПЕШИ",
@@ -10,9 +12,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="uk">
-      <body style={{ margin: 0, background: "#fafafa" }}>
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
+
