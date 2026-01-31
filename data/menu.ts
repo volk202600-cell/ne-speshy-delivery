@@ -9,7 +9,7 @@ export type MenuItem = {
 export const menu: MenuItem[] = [
   {
     id: "burger-classic",
-    name: "Бургер Класичний",
+    name: "Бургер Класік",
     price: 120,
     description: "Яловичина, сир, салат, соус",
     image: "/burger1.jpg",
