@@ -1,96 +1,120 @@
-'use client';
+'use client'
 
-import { useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
+export const dynamic = 'force-dynamic'
+
+import { useEffect, useState } from 'react'
+import { createClient } from '@supabase/supabase-js'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
-
-const SECRET_KEY = 'NESPESHY2026'; // ← можеш змінити
+)
 
 export default function AdminPage() {
-  const [allowed, setAllowed] = useState(false);
-  const [name, setName] = useState('');
-  const [price, setPrice] = useState('');
-  const [description, setDescription] = useState('');
-  const [file, setFile] = useState<File | null>(null);
-  const [menu, setMenu] = useState<any[]>([]);
+  const [menu, setMenu] = useState<any[]>([])
+  const [name, setName] = useState('')
+  const [price, setPrice] = useState('')
+  const [description, setDescription] = useState('')
+  const [file, setFile] = useState<File | null>(null)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('key') === SECRET_KEY) {
-      setAllowed(true);
-      loadMenu();
-    }
-  }, []);
+    loadMenu()
+  }, [])
 
-  const loadMenu = async () => {
-    const { data } = await supabase.from('menu').select('*').order('created_at', { ascending: false });
-    if (data) setMenu(data);
-  };
+  async function loadMenu() {
+    const { data } = await supabase.from('menu').select('*').order('created_at', { ascending: false })
+    setMenu(data || [])
+  }
 
-  const addItem = async () => {
-    if (!file) return alert('Додай фото');
+  async function addItem() {
+    if (!file) return alert('Вибери картинку')
 
-    const fileName = `${Date.now()}-${file.name}`;
+    setLoading(true)
 
-    const { error: uploadError } = await supabase.storage
+    const fileExt = file.name.split('.').pop()
+    const fileName = `${Date.now()}.${fileExt}`
+
+    const { error: uploadError } = await supabase
+      .storage
       .from('menu')
-      .upload(fileName, file);
+      .upload(fileName, file)
 
     if (uploadError) {
-      alert('Помилка загрузки фото');
-      return;
+      alert('Помилка загрузки картинки')
+      setLoading(false)
+      return
     }
 
-    const { data } = supabase.storage.from('menu').getPublicUrl(fileName);
+    const { data: image } = supabase
+      .storage
+      .from('menu')
+      .getPublicUrl(fileName)
 
     await supabase.from('menu').insert({
       name,
       price: Number(price),
       description,
-      image_url: data.publicUrl,
-    });
+      image_url: image.publicUrl
+    })
 
-    setName('');
-    setPrice('');
-    setDescription('');
-    setFile(null);
-    loadMenu();
-  };
+    setName('')
+    setPrice('')
+    setDescription('')
+    setFile(null)
 
-  const removeItem = async (id: string) => {
-    await supabase.from('menu').delete().eq('id', id);
-    loadMenu();
-  };
+    await loadMenu()
+    setLoading(false)
+  }
 
-  if (!allowed) {
-    return <h2 style={{ padding: 20 }}>❌ Нема доступу</h2>;
+  async function removeItem(id: string) {
+    await supabase.from('menu').delete().eq('id', id)
+    loadMenu()
   }
 
   return (
-    <div style={{ padding: 20, maxWidth: 500 }}>
-      <h2>🍔 Адмінка меню</h2>
+    <div style={{ padding: 20, maxWidth: 500, margin: '0 auto' }}>
+      <h2>Адмінка меню</h2>
 
-      <input placeholder="Назва" value={name} onChange={e => setName(e.target.value)} /><br /><br />
-      <input placeholder="Ціна" type="number" value={price} onChange={e => setPrice(e.target.value)} /><br /><br />
-      <textarea placeholder="Опис" value={description} onChange={e => setDescription(e.target.value)} /><br /><br />
-      <input type="file" accept="image/*" onChange={e => setFile(e.target.files?.[0] || null)} /><br /><br />
+      <input
+        placeholder="Назва"
+        value={name}
+        onChange={e => setName(e.target.value)}
+      />
 
-      <button onClick={addItem}>➕ Додати</button>
+      <input
+        placeholder="Ціна"
+        type="number"
+        value={price}
+        onChange={e => setPrice(e.target.value)}
+      />
+
+      <textarea
+        placeholder="Опис"
+        value={description}
+        onChange={e => setDescription(e.target.value)}
+      />
+
+      <input
+        type="file"
+        accept="image/*"
+        onChange={e => setFile(e.target.files?.[0] || null)}
+      />
+
+      <button onClick={addItem} disabled={loading}>
+        {loading ? 'Загрузка...' : 'Додати'}
+      </button>
 
       <hr />
 
       {menu.map(item => (
-        <div key={item.id} style={{ marginBottom: 15 }}>
-          <img src={item.image_url} style={{ width: '100%', borderRadius: 8 }} />
-          <b>{item.name}</b> — {item.price} грн
-          <p>{item.description}</p>
-          <button onClick={() => removeItem(item.id)}>❌ Видалити</button>
+        <div key={item.id} style={{ marginBottom: 20 }}>
+          <img src={item.image_url} width={120} />
+          <div><b>{item.name}</b></div>
+          <div>{item.price} грн</div>
+          <button onClick={() => removeItem(item.id)}>Видалити</button>
         </div>
       ))}
     </div>
-  );
+  )
 }
