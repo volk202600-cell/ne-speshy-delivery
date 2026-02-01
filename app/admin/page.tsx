@@ -3,10 +3,6 @@
 import { useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 
-const supabase = createClient(
-  "https://utzwzxczzjqwpbjbwlwc.supabase.co", // ← ТВОЯ URL
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV0end6eGN6empxd3BiamJ3bHdjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk5MDA5NzQsImV4cCI6MjA4NTQ3Njk3NH0.vRHC--uCdCQyXQUrgRrGXiBIpWZoxu2cMhaOkqRc8pg" // ← ТІЛЬКИ anon public
-);
 
 export default function AdminPage() {
   const [name, setName] = useState("");
