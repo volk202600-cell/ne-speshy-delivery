@@ -1,60 +1,28 @@
-let cart=[];
+export default async function handler(req, res) {
+  const TOKEN = process.env.POSTER_TOKEN;
 
-async function loadMenu(){
-  const res = await fetch('/api/menu');
-  return res.json();
+  try {
+    const r = await fetch(
+      `https://ne-speshi-bar.joinposter.com/api/menu.getProducts?token=${TOKEN}`
+    );
+
+    const data = await r.json();
+
+    if (!data.response) {
+      return res.status(500).json({ error: "Poster error", data });
+    }
+
+    const menu = data.response
+      .filter(item => item.visible === 1)
+      .map(item => ({
+        name: item.product_name,
+        price: Number(item.price),
+        photo: item.photo || 'https://via.placeholder.com/400x300?text=No+Image'
+      }));
+
+    res.status(200).json(menu);
+
+  } catch (e) {
+    res.status(500).json({ error: "Server error" });
+  }
 }
-
-function renderMenu(menu){
-  const c=document.getElementById('catalog');
-  menu.forEach(it=>{
-    const d=document.createElement('div');
-    d.className='card';
-    d.innerHTML=`
-      <img src="${it.photo}">
-      <b>${it.name}</b>
-      <div>${it.price} ₴</div>
-      <button class="btn">Додати</button>
-    `;
-    d.querySelector('button').onclick=e=>addToCart(it,e.target);
-    c.appendChild(d);
-  });
-}
-
-function addToCart(it,btn){
-  const f=cart.find(i=>i.name===it.name);
-  if(f)f.qty++;else cart.push({...it,qty:1});
-  animate(btn);
-  updateCart();
-}
-
-function updateCart(){
-  let count=0,sum=0;
-  cart.forEach(i=>{count+=i.qty;sum+=i.qty*i.price});
-  document.getElementById('cart-count').innerText=count;
-  document.getElementById('cart-total').innerText=sum+' ₴';
-}
-
-function animate(btn){
-  const r=btn.getBoundingClientRect();
-  const c=document.getElementById('open-cart').getBoundingClientRect();
-  const d=document.createElement('div');
-  d.className='fly-dot';
-  d.style.left=r.left+'px';
-  d.style.top=r.top+'px';
-  document.body.appendChild(d);
-  setTimeout(()=>{
-    d.style.left=c.left+'px';
-    d.style.top=c.top+'px';
-    d.style.opacity=0;
-  },10);
-  setTimeout(()=>d.remove(),600);
-}
-
-document.getElementById('open-cart').onclick=()=>document.getElementById('cart-drawer').classList.add('open');
-document.getElementById('close-cart').onclick=()=>document.getElementById('cart-drawer').classList.remove('open');
-
-window.onload=async()=>{
-  const menu=await loadMenu();
-  renderMenu(menu);
-};
