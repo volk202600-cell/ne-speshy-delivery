@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ne Speshi Bar</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header>
+<div class="brand">
+<img src="logo.jpg" class="logo"/>
+</div>
+<button id="cartBtn" class="cart-btn">🛒 <span id="cartCount">0</span></button>
+</header>
+
+<div id="menu" class="grid"></div>
+
+<div id="cartDrawer" class="cart-drawer">
+<h2>Кошик</h2>
+<div id="cartItems"></div>
+<div class="total">Сума: <span id="totalPrice">0</span> ₴</div>
+<button id="checkoutBtn" class="primary">Оформити</button>
+<button id="closeCart">Закрити</button>
+</div>
+
+<div id="orderModal" class="modal hidden">
+<div class="modal-content">
+<h2>Оформлення</h2>
+<input id="name" placeholder="Ім'я">
+<input id="phone" placeholder="Телефон">
+<input id="address" placeholder="Адреса">
+<textarea id="comment" placeholder="Коментар"></textarea>
+<select id="payment">
+<option>Готівка</option>
+<option>Онлайн</option>
+</select>
+<button id="sendOrder" class="primary">Підтвердити</button>
+<button id="closeOrder">Скасувати</button>
+</div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
