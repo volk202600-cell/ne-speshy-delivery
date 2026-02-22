@@ -3,7 +3,7 @@ export default async function handler(req, res) {
 
   try {
     const r = await fetch(
-      `https://ne-speshi-bar.joinposter.com/api/menu.getProducts?token=${TOKEN}`
+      `https://ne-speshi-bar.joinposter.com/api/menu.getProducts?token=${TOKEN}&with_price=1`
     );
 
     const data = await r.json();
@@ -14,9 +14,7 @@ export default async function handler(req, res) {
 
     const menu = data.response.map(item => ({
       name: item.product_name,
-      price: item.price?.[0]?.value
-        ? Number(item.price[0].value) / 100
-        : 0,
+      price: item.price ? Number(item.price) / 100 : 0,
       photo: item.photo
         ? `https://ne-speshi-bar.joinposter.com${item.photo}`
         : 'https://via.placeholder.com/400x300?text=No+Image'
