@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ne Speshi Bar</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">🍔 Ne Speshi Bar</div>
+  <button id="open-cart" class="cart-btn">
+    🛒 <span id="cart-count">0</span>
+  </button>
+</header>
+
+<main class="container">
+  <section id="catalog" class="catalog"></section>
+</main>
+
+<div id="cart-drawer" class="cart-drawer">
+  <button id="close-cart">✕</button>
+  <div id="cart-contents"></div>
+  <div class="cart-footer">
+    <b id="cart-total">0 ₴</b>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
