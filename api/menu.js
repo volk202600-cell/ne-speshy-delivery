@@ -14,8 +14,12 @@ export default async function handler(req, res) {
 
     const menu = data.response.map(item => ({
       name: item.product_name,
-      price: Number(item.price),
-      photo: item.photo || 'https://via.placeholder.com/400x300?text=No+Image'
+      price: item.price?.[0]?.value
+        ? Number(item.price[0].value) / 100
+        : 0,
+      photo: item.photo
+        ? `https://ne-speshi-bar.joinposter.com${item.photo}`
+        : 'https://via.placeholder.com/400x300?text=No+Image'
     }));
 
     res.status(200).json(menu);
