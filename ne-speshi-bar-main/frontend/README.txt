@@ -1,1 +1,0 @@
-Upload these files to your GitHub repo (frontend folder). Open index.html or deploy to Vercel.
