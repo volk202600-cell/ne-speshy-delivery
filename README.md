@@ -1,1 +1,0 @@
-# ne-speshy-delivery
